@@ -2,19 +2,34 @@ import numpy as np
 import cvxpy as cp
 import matplotlib.pyplot as plt
 
-x0 = np.array([0.0, 0.0])
-x1 = np.array([1.0, 0.0])
+# Betts pg. 543
 
-N = 40
-tf = 10.0
-dt = tf / N
+x0 = np.array([0.0, 0.0, 3.0]) # height, velocity, mass
+dt = 0.05
 
-# dynamics
-A = np.array([[0.0, 1.0], [0.0, 0.0]])
-B = np.array([[0.0], [1.0]])
+# constants
+Tm = 193.044
+g = 32.174
+sigma = 5.49153484923381010e-5
+c = 1580.9425279876559
+h0 = 23800
+
+def rocket_dynamics(x, T):
+
+    h = x[0]
+    hDot = x[1]
+    vDot = (1 / x[2])* (T - sigma*hDot*hDot*np.exp(-h/h0)) - g
+    mDot = -T / c
+    return hDot, vDot, mDot
+
+def rocket_dynamics_lin(x, T)
+
+    hDot, vDot, mDot = rocket_dynamics(x, T)
+
+    return x + np.a
 
 
-def solve_min_control_effort():
+def solve_max_altitude():
 
     x = cp.Variable((2, N))  # [pos(1), vel(1)]
     u = cp.Variable((1, N))  # force
@@ -31,12 +46,7 @@ def solve_min_control_effort():
 def create_constraints(x, u):
 
     constraints = []
-    constraints.append(x[:, 0] == x0)  # initial state
-    constraints.append(x[:, N-1] == x1)  # final state
 
-    # dynamics constraints
-    for t in range(N - 1):
-        constraints.append(x[:, t + 1] == x[:, t] + (A @ x[:, t] + B @ u[:, t]) * dt)
 
     return constraints
 
